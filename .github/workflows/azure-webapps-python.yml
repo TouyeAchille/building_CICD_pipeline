@@ -29,7 +29,8 @@ env:
 on:
   push:
     branches: 
-      - master 
+      - master
+  workflow_dispatch:     
 permissions:
   contents: read
 jobs:
