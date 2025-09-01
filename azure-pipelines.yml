@@ -7,7 +7,7 @@ trigger:
 - master
 
 pool:
-  vmImage: Hosted Agent # ubuntu-latest # Hosted Agent
+  vmImage: linuxpool # ubuntu-latest # Hosted Agent
 
 steps:
 - script: echo Hello, world!
