@@ -11,13 +11,8 @@ stages:
     - job: buildjob
       displayName: build job
       steps:
-        - task: UsePythonVersion@0
-          inputs:
-            versionSpec: '3.12'
-            addToPath: true
-            architecture: 'x64'
-            
         - script: |
+            python3 --version
             make venv
             source ~/.udacity-devops/bin/activate
             make install
