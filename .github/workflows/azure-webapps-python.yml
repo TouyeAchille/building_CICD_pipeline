@@ -22,7 +22,8 @@ name: Build and deploy Python app to Azure Web App  # The name of the workflow
 env:
   AZURE_WEBAPP_NAME: "mlapps"  # set this to the name of your Azure Web App
   PYTHON_VERSION: '3.10'              # set this to the Python version to use
-  AZURE_WEBAPP_PACKAGE_PATH: '.'  # The path to the package to deploy, relative to the root of the repository
+  AZURE_RESOURCE_GROUP_NAME: "Azuredevops" # Set this to your Azure Resource Group
+  AZURE_REGION: "West Europe" # Set this to your Azure Region
 
 on:
   push:
@@ -64,14 +65,15 @@ jobs:
       # Log in to Azure
       - uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          creds: ${{secrets.AZURE_CREDENTIALS}}
 
       # deploy web App      
       - name: 'Deploy to Azure Web App'
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          package: ${{env.AZURE_WEBAPP_PACKAGE_PATH}}
-      - name: logout from Azure
         run: |
-          az logout
+          az webapp up \
+            --name "${{ env.AZURE_WEBAPP_NAME }}"" \
+            --resource-group "${{env.AZURE_RESOURCE_GROUP_NAME}}" \
+            --runtime "PYTHON:${{ env.PYTHON_VERSION }}" \
+            --sku F1 \
+            --location "${{ env.AZURE_REGION }}" 
+        
