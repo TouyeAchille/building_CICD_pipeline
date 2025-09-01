@@ -1,18 +1,33 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - master
 
-pool: linuxpool # ubuntu-latest # Hosted Agent
+pool: linuxpool 
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+stages:
+- stage: build
+  displayName: build stage
+  pool: linuxpool
+  jobs:
+    - job: buildjob
+      displayName: build job
+      steps:
+        - task: UsePythonVersion@0
+          inputs:
+            versionSpec: '3.12'
+            addToPath: true
+            architecture: 'x64'
+            
+        - script: |
+            make venv
+            source ~/.udacity-devops/bin/activate
+            make install
+          workingDirectory: .
+          displayName: Create and start virtual environment Install dependencies
+        
+          
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+         
+         
+
+      
+
