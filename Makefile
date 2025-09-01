@@ -1,4 +1,4 @@
-setup:
+venv:
 	python3 -m venv ~/.udacity-devops
 
 install:
