@@ -71,7 +71,7 @@ jobs:
       - name: 'Deploy to Azure Web App'
         run: |
           az webapp up \
-            --name "${{ env.AZURE_WEBAPP_NAME }}"" \
+            --name "${{ env.AZURE_WEBAPP_NAME }}" \
             --resource-group "${{env.AZURE_RESOURCE_GROUP_NAME}}" \
             --runtime "PYTHON:${{ env.PYTHON_VERSION }}" \
             --sku F1 \
