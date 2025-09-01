@@ -24,19 +24,19 @@ env:
   PYTHON_VERSION: '3.10'              # set this to the Python version to use
   AZURE_RESOURCE_GROUP_NAME: "Azuredevops" # Set this to your Azure Resource Group
   AZURE_REGION: "West Europe" # Set this to your Azure Region
+  AZURE_PLAN: "mlappPlan" # Set this to your Azure App Service Plan name
 
 on:
   push:
-    branches: [ "master" ]
-  workflow_dispatch:
-
+    branches: 
+      - master 
 permissions:
   contents: read
-
 jobs:
   build:
     name: Build Python app
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -74,6 +74,7 @@ jobs:
             --name "${{ env.AZURE_WEBAPP_NAME }}" \
             --resource-group "${{env.AZURE_RESOURCE_GROUP_NAME}}" \
             --runtime "PYTHON:${{ env.PYTHON_VERSION }}" \
+            -- plan "${{ env.AZURE_PLAN }}" \
             --sku F1 \
             --location "${{ env.AZURE_REGION }}" 
         
