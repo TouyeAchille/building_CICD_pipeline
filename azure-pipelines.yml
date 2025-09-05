@@ -27,6 +27,8 @@ stages:
 
         - script: |
             python3 --version
+            sudo apt update
+            sudo apt install make
             make venv
             source ~/.udacity-devops/bin/activate
             make all
