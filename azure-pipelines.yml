@@ -25,9 +25,11 @@ stages:
               pip | "$(Agent.OS)"
             path: ~/.cache/pip
 
-    - job: buildjob
-      displayName: build job
-      steps:
+        - task: UsePythonVersion@0
+          inputs:
+            versionSpec: '$(pythonVersion)'
+          displayName: 'Use Python $(pythonVersion)'
+
         - script: |
             python3 --version
             make venv
@@ -35,6 +37,13 @@ stages:
             make all
           workingDirectory: $(projectRoot)
           displayName: Install dependencies
+        - task: ArchiveFiles@2
+          inputs:
+            rootFolderOrFile: '$(projectRoot)'
+            includeRootFolder: true
+            archiveType: 'zip'
+            archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+            replaceExistingArchive: true
 
 - stage: deploy
   displayName: deploy web app to azure app service
@@ -48,12 +57,17 @@ stages:
         runOnce:
           deploy:
             steps:
-            - task: AzureWebApp@1
+            - task: UsePythonVersion@0
               inputs:
-                azureSubscription: 'UdacityDevOps'
-                appType: 'webAppLinux'
-                appName: 'udacity-devops-flask-app'
-                package: '$(projectRoot)/**/*.zip'
+                versionSpec: '$(pythonVersion)'
+              displayName: 'Use Python version'
+            - task: AzureWebApp@1
               displayName: 'Deploy to Azure Web App'
+              inputs:
+                azureSubscription: $(azureServiceConnectionId)
+                appType: 'webAppLinux'
+                appName: $(webAppName)
+                package: '$(projectRoot)/**/*.zip'
+              
     
 
