@@ -1,7 +1,7 @@
 trigger:
 - master
 
-pool: linuxpool 
+pool: linuxpool
 
 variables:
   projectRoot: $(System.DefaultWorkingDirectory)
@@ -25,6 +25,9 @@ stages:
               pip | "$(Agent.OS)"
             path: ~/.cache/pip
 
+    - job: buildjob
+      displayName: build job
+      steps:
         - script: |
             python3 --version
             make venv
@@ -52,15 +55,5 @@ stages:
                 appName: 'udacity-devops-flask-app'
                 package: '$(projectRoot)/**/*.zip'
               displayName: 'Deploy to Azure Web App'
-     
-
-     
-
-
-          
-
-         
-         
-
-      
+    
 
