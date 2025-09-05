@@ -26,7 +26,9 @@ stages:
             path: ~/.cache/pip
 
         - script: |
+            sudo apt install python3.12-venv -y
             python3 --version
+            sudo apt install python3-pip
             sudo apt update
             sudo apt install make
             make venv
