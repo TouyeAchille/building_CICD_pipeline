@@ -1,19 +1,66 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - master
 
-pool:
-  vmImage: Hosted Agent # ubuntu-latest # Hosted Agent
+pool: linuxpool 
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+variables:
+  projectRoot: $(System.DefaultWorkingDirectory)
+  EnvironmentName: appenv_production
+  WebAppName: mlapps-houseprice
+  azureServiceConnectionId: 'azurerm-connection'
+  pythonVersion: '3.10'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+stages:
+- stage: build
+  displayName: build stage
+  pool: linuxpool
+  jobs:
+    - job: BuildJob
+      displayName: BuildJob
+      steps:
+        - task: Cache@2
+          inputs:
+            key: 'pip | "$(Agent.OS)" | requirements.txt'
+            restoreKeys: |
+              pip | "$(Agent.OS)"
+            path: ~/.cache/pip
+
+        - script: |
+            python3 --version
+            make venv
+            source ~/.udacity-devops/bin/activate
+            make all
+          workingDirectory: $(projectRoot)
+          displayName: Install dependencies
+
+- stage: deploy
+  displayName: deploy web app to azure app service
+  pool: linuxpool
+  dependsOn: build
+  condition: succeeded()
+  jobs:
+   - deployment: DeploymentJob
+     environment: $(EnvironmentName)
+     strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: AzureWebApp@1
+              inputs:
+                azureSubscription: 'UdacityDevOps'
+                appType: 'webAppLinux'
+                appName: 'udacity-devops-flask-app'
+                package: '$(projectRoot)/**/*.zip'
+              displayName: 'Deploy to Azure Web App'
+     
+
+     
+
+
+          
+
+         
+         
+
+      
+

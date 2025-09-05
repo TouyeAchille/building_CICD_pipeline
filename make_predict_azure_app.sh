@@ -25,5 +25,5 @@ curl -d '{
    }
 }'\
      -H "Content-Type: application/json" \
-     -X POST https://mlapps.azurewebsites.net:$PORT/predict 
+     -X POST https://mlapps-houseprice.azurewebsites.net:$PORT/predict 
      
